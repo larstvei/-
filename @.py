@@ -2,7 +2,8 @@
 from os import path
 from sys import argv, stdout
 from uuid import uuid1
-from paramiko import AutoAddPolicy, SSHClient, SSHConfig
+from getpass import getpass
+from paramiko import AuthenticationException, AutoAddPolicy, SSHClient, SSHConfig
 
 
 def lookup(configfile):
@@ -33,7 +34,15 @@ def connect(login):
     args = parse(login)
 
     client.set_missing_host_key_policy(AutoAddPolicy())
-    client.connect(**args)
+    try:
+        client.connect(**args)
+    except AuthenticationException:
+        args['password'] = getpass()
+    try:
+        client.connect(**args)
+    except AuthenticationException:
+        print 'Authentication error'
+        exit(0)
 
     return (client, client.open_sftp())
 
