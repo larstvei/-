@@ -52,7 +52,8 @@ if __name__ == "__main__":
     tempdir = 'at-' + str(uuid1())
     sftp.mkdir(tempdir)
 
-    files = filter(lambda x: path.exists(x), cmd.split())
+    files = [x[1:] for x in cmd.split()
+             if x.startswith('@') and path.exists(x[1:])]
     remotefiles = map(lambda f: tempdir + '/' + f, files)
 
     map(lambda (f, r): sftp.put(f, r), zip(files, remotefiles))
