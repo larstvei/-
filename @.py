@@ -38,6 +38,14 @@ def connect(login):
     return (client, client.open_sftp())
 
 
+def strip(cmd):
+    return cmd.replace('@', '')
+
+
+def islocal(arg):
+    return arg.startswith('@') and path.exists(arg[1:])
+
+
 if __name__ == "__main__":
 
     if len(argv) < 3:
@@ -49,16 +57,15 @@ if __name__ == "__main__":
 
     (client, sftp) = connect(login)
 
-    tempdir = 'at-' + str(uuid1())
+    tempdir = '@-' + str(uuid1())
     sftp.mkdir(tempdir)
 
-    files = [x[1:] for x in cmd.split()
-             if x.startswith('@') and path.exists(x[1:])]
+    files = [x[1:] for x in cmd.split() if islocal(x)]
     remotefiles = map(lambda f: tempdir + '/' + f, files)
 
     map(lambda (f, r): sftp.put(f, r), zip(files, remotefiles))
 
-    _, out, _ = client.exec_command('cd ' + tempdir + ' ; ' + cmd)
+    _, out, _ = client.exec_command('cd ' + tempdir + ' ; ' + strip(cmd))
 
     stdout.write(out.read())
 
