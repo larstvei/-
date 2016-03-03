@@ -1,0 +1,51 @@
+* @
+
+  ~@~ is a program that is used to execute a single command on a remote machine
+  using [[https://en.wikipedia.org/wiki/Secure_Shell][ssh]].
+
+  The command:
+
+  #+BEGIN_EXAMPLE
+  ssh HOST echo test
+  #+END_EXAMPLE
+
+  will produce exactly the same result as:
+
+  #+BEGIN_EXAMPLE
+  @ HOST echo test
+  #+END_EXAMPLE
+
+  The ~@~ program introduces the ~@~ /operator/. When a file is prefixed by the
+  ~@~ operator, the file should be transferred to the remote location before
+  the command is executed.
+
+** Example
+
+   Assume you have a file called ~hello~ containing ~hello world!~ in the
+   current directory. If we run the command:
+
+   #+BEGIN_EXAMPLE
+   @ HOST cat @hello
+   #+END_EXAMPLE
+
+   the result will be:
+
+   #+BEGIN_EXAMPLE
+   hello world!
+   #+END_EXAMPLE
+
+** Notes
+
+   ~@~ supports hosts specified in =~/.ssh/config=.
+
+   If a command includes piping or redirections the command should be quoted:
+
+   #+BEGIN_EXAMPLE
+   @ HOST 'cat @hello | rev'
+   #+END_EXAMPLE
+
+   The result is:
+
+   #+BEGIN_EXAMPLE
+   !dlrow olleh
+   #+END_EXAMPLE
