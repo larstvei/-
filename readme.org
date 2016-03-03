@@ -19,6 +19,27 @@
   ~@~ operator, the file should be transferred to the remote location before
   the command is executed.
 
+** Installation
+
+   The program is depended on [[http://www.paramiko.org/][paramiko]], which can be installed with ~pip~
+   using:
+
+   #+BEGIN_EXAMPLE
+   pip install paramiko
+   #+END_EXAMPLE
+
+   Then the program can be executed using:
+
+   #+BEGIN_EXAMPLE
+   python path/to/@.py
+   #+END_EXAMPLE
+
+   For simplicity I have the following alias in my =~/.bashrc=:
+
+   #+BEGIN_EXAMPLE
+   alias @='python /path/to/@.py'
+   #+END_EXAMPLE
+
 ** Example
 
    Assume you have a file called ~hello~ containing ~hello world!~ in the
