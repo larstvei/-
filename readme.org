@@ -59,10 +59,11 @@
 
    ~@~ supports hosts specified in =~/.ssh/config=.
 
-   If a command includes piping or redirections the command should be quoted:
+   If a command includes piping or redirections, these operators should be
+   escaped:
 
    #+BEGIN_EXAMPLE
-   @ HOST 'cat @hello | rev'
+   @ HOST cat @hello \| rev
    #+END_EXAMPLE
 
    The result is:
