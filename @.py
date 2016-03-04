@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 from os import path
-from sys import argv, stdout
+from re import escape
+from sys import argv, stdout, stderr
 from uuid import uuid1
 from getpass import getpass
 from paramiko import AuthenticationException, AutoAddPolicy, SSHClient, SSHConfig
@@ -47,8 +48,6 @@ def connect(login):
     return (client, client.open_sftp())
 
 
-def strip(cmd):
-    return cmd.replace('@', '')
 def islocalfile(arg):
     return arg.startswith('@') and path.exists(path.expanduser(arg[1:]))
 
@@ -87,24 +86,14 @@ if __name__ == "__main__":
         exit(1)
 
     login = argv[1]
-    cmd = ' '.join(argv[2:])
 
     (client, sftp) = connect(login)
 
-    tempdir = '@-' + str(uuid1())
-    sftp.mkdir(tempdir)
+    cmd, cleanup = sendfiles(argv[2:], True)
+    _, out, err = client.exec_command(' '.join(cmd))
 
-    files = [x[1:] for x in cmd.split() if islocal(x)]
-    remotefiles = map(lambda f: tempdir + '/' + f, files)
-
-    map(lambda (f, r): sftp.put(f, r), zip(files, remotefiles))
-
-    _, out, _ = client.exec_command('cd ' + tempdir + ' ; ' + strip(cmd))
-
+    stderr.write(err.read())
     stdout.write(out.read())
 
-    map(lambda f: sftp.remove(f), remotefiles)
-    sftp.rmdir(tempdir)
-
-    sftp.close()
+    cleanup()
     client.close()
