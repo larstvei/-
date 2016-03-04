@@ -53,6 +53,31 @@ def islocalfile(arg):
     return arg.startswith('@') and path.exists(path.expanduser(arg[1:]))
 
 
+def sendfiles(cmd, verbose=False):
+    tempdir = '@-' + str(uuid1())
+    files = [(i, x[1:]) for i, x in enumerate(cmd) if islocalfile(x)]
+    remotefiles = [(i, tempdir + '/' + f) for i, f in files]
+
+    if not files:
+        return cmd, lambda: None
+
+    sftp.mkdir(tempdir)
+
+    for (f, r) in zip(files, remotefiles):
+        cmd[r[0]] = escape(r[1])
+        sftp.put(f[1], r[1])
+        if verbose:
+            print '{0: <50}{1}'.format(f[1], '100%')
+
+    if verbose:
+        print '-' * 54
+
+    def cleanup():
+        map(lambda f: sftp.remove(f[1]), remotefiles)
+        sftp.rmdir(tempdir)
+        sftp.close()
+
+    return cmd, cleanup
 
 
 if __name__ == "__main__":
