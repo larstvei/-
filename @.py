@@ -49,10 +49,10 @@ def connect(login):
 
 def strip(cmd):
     return cmd.replace('@', '')
+def islocalfile(arg):
+    return arg.startswith('@') and path.exists(path.expanduser(arg[1:]))
 
 
-def islocal(arg):
-    return arg.startswith('@') and path.exists(arg[1:])
 
 
 if __name__ == "__main__":
