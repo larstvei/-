@@ -39,11 +39,11 @@ def connect(login):
         client.connect(**args)
     except AuthenticationException:
         args['password'] = getpass()
-    try:
-        client.connect(**args)
-    except AuthenticationException:
-        print 'Authentication error'
-        exit(0)
+        try:
+            client.connect(**args)
+        except AuthenticationException as e:
+            print e.message
+            exit(0)
 
     return (client, client.open_sftp())
 
