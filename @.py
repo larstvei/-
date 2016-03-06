@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     (client, sftp) = connect(login)
 
-    cmd, cleanup = sendfiles(argv[2:], True)
+    cmd, cleanup = sendfiles(argv[2:])
     _, out, err = client.exec_command(' '.join(cmd))
 
     stderr.write(err.read())
