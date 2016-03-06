@@ -47,7 +47,7 @@ def connect(login):
             client.connect(**args)
         except AuthenticationException as e:
             print e.message
-            exit(0)
+            exit(1)
 
     return (client, client.open_sftp())
 
