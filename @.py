@@ -34,6 +34,10 @@ def connect(login):
     client = SSHClient()
     args = parse(login)
 
+    if "identityfile" in args:
+        args["key_filename"] = args["identityfile"]
+        del args["identityfile"]
+
     client.set_missing_host_key_policy(AutoAddPolicy())
     try:
         client.connect(**args)
