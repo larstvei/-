@@ -59,7 +59,7 @@ def islocalfile(arg):
 def sendfiles(cmd, verbose=False):
     tempdir = '@-' + str(uuid1())
     files = [(i, x[1:]) for i, x in enumerate(cmd) if islocalfile(x)]
-    remotefiles = [(i, tempdir + '/' + f) for i, f in files]
+    remotefiles = [(i, tempdir + '/' + path.basename(f)) for i, f in files]
 
     if not files:
         return cmd, lambda: None
