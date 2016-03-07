@@ -34,16 +34,20 @@ def connect(login):
     client = SSHClient()
     args = parse(login)
 
+    if "identityfile" in args:
+        args["key_filename"] = args["identityfile"]
+        del args["identityfile"]
+
     client.set_missing_host_key_policy(AutoAddPolicy())
     try:
         client.connect(**args)
     except AuthenticationException:
         args['password'] = getpass()
-    try:
-        client.connect(**args)
-    except AuthenticationException:
-        print 'Authentication error'
-        exit(0)
+        try:
+            client.connect(**args)
+        except AuthenticationException as e:
+            print e.message
+            exit(1)
 
     return (client, client.open_sftp())
 
@@ -89,7 +93,7 @@ if __name__ == "__main__":
 
     (client, sftp) = connect(login)
 
-    cmd, cleanup = sendfiles(argv[2:], True)
+    cmd, cleanup = sendfiles(argv[2:])
     _, out, err = client.exec_command(' '.join(cmd))
 
     stderr.write(err.read())
